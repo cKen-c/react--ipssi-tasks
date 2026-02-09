@@ -1,6 +1,7 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router";
+import AuthGard from "./components/AuthGard/AuthGard.jsx";
 import JwtContextProvider from "./contexts/JwtContext.jsx";
 import "./index.css";
 import PageAccueil from "./pages/pageAccueil/PageAccueil.jsx";
@@ -10,12 +11,15 @@ const router = createBrowserRouter([
   {
     path: "/",
     element: <PageAccueil />,
-    errorElement: <p>404</p>,
   },
   {
     path: "/tasks",
-    element: <PageTasks />,
+    element: <AuthGard children={<PageTasks />} />,
     errorElement: <p>Oups</p>,
+  },
+  {
+    path: "*",
+    element: <p>404</p>,
   },
 ]);
 
