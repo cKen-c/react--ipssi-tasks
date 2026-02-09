@@ -3,6 +3,7 @@ import { createRoot } from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router";
 import "./index.css";
 import PageAccueil from "./pages/pageAccueil/PageAccueil.jsx";
+import PageTasks from "./pages/pageTasks/PageTasks.jsx";
 
 const router = createBrowserRouter([
   {
@@ -12,7 +13,8 @@ const router = createBrowserRouter([
   },
   {
     path: "/tasks",
-    element: <p>Tasks</p>,
+    element: <PageTasks />,
+    errorElement: <p>Oups</p>,
   },
 ]);
 
