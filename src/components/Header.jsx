@@ -1,11 +1,11 @@
-import { Link } from "react-router";
+import NavLink from "./NavLink";
 
 const Header = () => {
   return (
     <header>
       <nav>
-        <Link to="/">Accueil</Link>;
-        <Link to="/tasks">Voir les tâches en cours</Link>;
+        <NavLink path="/">Accueil</NavLink>
+        <NavLink path="/tasks">Voir les tâches en cours</NavLink>
       </nav>
     </header>
   );
