@@ -11,11 +11,12 @@ const router = createBrowserRouter([
   {
     path: "/",
     element: <PageAccueil />,
+    errorElement: <p>500</p>,
   },
   {
     path: "/tasks",
     element: <AuthGard children={<PageTasks />} />,
-    errorElement: <p>Oups</p>,
+    errorElement: <p>500</p>,
   },
   {
     path: "*",
