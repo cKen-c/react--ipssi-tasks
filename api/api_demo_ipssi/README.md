@@ -3,6 +3,7 @@
 Projet de demonstration Symfony pour les etudiants BTS SIO SLAM 2eme annee.
 
 Une API REST simple de gestion de taches qui demontre :
+
 - L'utilisation de **Doctrine ORM** (mapping objet-relationnel)
 - L'ecriture de **requetes SQL brutes** (Raw SQL) pour le jury BTS
 - La creation d'une **API REST** avec Symfony
@@ -32,6 +33,7 @@ cp .env .env.local
 ```
 
 Editer `.env.local` :
+
 ```
 DATABASE_URL="mysql://root:@127.0.0.1:3306/api_demo_tasks?serverVersion=8.0.32&charset=utf8mb4"
 ```
@@ -46,6 +48,41 @@ php bin/console doctrine:migrations:migrate
 # 6. Charger les donnees de test
 php bin/console doctrine:fixtures:load
 ```
+
+## Gérer les CORS :
+
+Voir pour installer
+
+```bash
+composer require nelmio/cors-bundle
+```
+
+Voir la doc si besoin :
+[ici](https://symfony.com/bundles/NelmioCorsBundle/current/index.html)
+
+Dans /config/packages/nelmio_cors.yaml
+
+```nelmio_cors:
+    defaults:
+        origin_regex: true
+        allow_origin: ["%env(CORS_ALLOW_ORIGIN)%"]
+        allow_methods: ["GET", "OPTIONS", "POST", "PUT", "PATCH", "DELETE"]
+        allow_headers: ["Content-Type", "Authorization"]
+        expose_headers: ["Link"]
+        max_age: 3600
+    paths:
+        "^/": null
+```
+
+Pensez a mettre a jour le .env =D
+
+## Générer les clés public et privé pour le JWT :
+
+```bash
+php bin/console lexik:jwt:generate-keypair
+```
+
+Voir la doc : [package jwt lexik] (https://symfony.com/bundles/LexikJWTAuthenticationBundle/current/index.html)
 
 ## Lancer le serveur
 
@@ -63,44 +100,44 @@ L'API est accessible sur `http://localhost:8000/api/tasks`
 
 ### Authentification
 
-| Methode | URL | Description | Acces |
-|---------|-----|-------------|-------|
-| POST | `/api/register` | Inscription | Public |
-| POST | `/api/login` | Connexion (retourne token JWT) | Public |
-| GET | `/api/me` | Infos utilisateur connecte | Authentifie |
+| Methode | URL             | Description                    | Acces       |
+| ------- | --------------- | ------------------------------ | ----------- |
+| POST    | `/api/register` | Inscription                    | Public      |
+| POST    | `/api/login`    | Connexion (retourne token JWT) | Public      |
+| GET     | `/api/me`       | Infos utilisateur connecte     | Authentifie |
 
 ### Taches
 
-| Methode | URL | Description | Acces |
-|---------|-----|-------------|-------|
-| GET | `/api/tasks` | Liste toutes les taches | Public |
-| GET | `/api/tasks/{id}` | Recupere une tache | Public |
-| POST | `/api/tasks` | Cree une tache | Public |
-| PUT | `/api/tasks/{id}` | Modifie une tache | Public |
-| DELETE | `/api/tasks/{id}` | Supprime une tache | **ROLE_ADMIN** |
-| GET | `/api/tasks/stats` | Statistiques | Public |
+| Methode | URL                | Description             | Acces          |
+| ------- | ------------------ | ----------------------- | -------------- |
+| GET     | `/api/tasks`       | Liste toutes les taches | Public         |
+| GET     | `/api/tasks/{id}`  | Recupere une tache      | Public         |
+| POST    | `/api/tasks`       | Cree une tache          | Public         |
+| PUT     | `/api/tasks/{id}`  | Modifie une tache       | Public         |
+| DELETE  | `/api/tasks/{id}`  | Supprime une tache      | **ROLE_ADMIN** |
+| GET     | `/api/tasks/stats` | Statistiques            | Public         |
 
 ### Version Raw SQL (pour le jury BTS)
 
 Les memes endpoints avec `/raw` utilisent des requetes SQL ecrites a la main :
 
-| Methode | URL | Requete SQL |
-|---------|-----|-------------|
-| GET | `/api/tasks/raw` | SELECT |
-| GET | `/api/tasks/raw/{id}` | SELECT WHERE |
-| POST | `/api/tasks/raw` | INSERT |
-| PUT | `/api/tasks/raw/{id}` | UPDATE |
-| DELETE | `/api/tasks/raw/{id}` | DELETE (ROLE_ADMIN) |
+| Methode | URL                   | Requete SQL         |
+| ------- | --------------------- | ------------------- |
+| GET     | `/api/tasks/raw`      | SELECT              |
+| GET     | `/api/tasks/raw/{id}` | SELECT WHERE        |
+| POST    | `/api/tasks/raw`      | INSERT              |
+| PUT     | `/api/tasks/raw/{id}` | UPDATE              |
+| DELETE  | `/api/tasks/raw/{id}` | DELETE (ROLE_ADMIN) |
 
 ## Utilisateurs de test
 
 Les fixtures creent les utilisateurs suivants :
 
-| Email | Mot de passe | Role |
-|-------|--------------|------|
-| admin@example.com | admin123 | ROLE_ADMIN |
-| user@example.com | user123 | ROLE_USER |
-| marie@example.com | marie123 | ROLE_USER |
+| Email             | Mot de passe | Role       |
+| ----------------- | ------------ | ---------- |
+| admin@example.com | admin123     | ROLE_ADMIN |
+| user@example.com  | user123      | ROLE_USER  |
+| marie@example.com | marie123     | ROLE_USER  |
 
 ## Structure du projet
 
@@ -123,6 +160,7 @@ src/
 ## Exemples de requetes
 
 ### Inscription
+
 ```bash
 curl -X POST http://localhost:8000/api/register \
   -H "Content-Type: application/json" \
@@ -130,6 +168,7 @@ curl -X POST http://localhost:8000/api/register \
 ```
 
 ### Connexion (obtenir un token JWT)
+
 ```bash
 curl -X POST http://localhost:8000/api/login \
   -H "Content-Type: application/json" \
@@ -137,16 +176,19 @@ curl -X POST http://localhost:8000/api/login \
 ```
 
 Reponse :
+
 ```json
-{"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9..."}
+{ "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9..." }
 ```
 
 ### Lister les taches (public)
+
 ```bash
 curl http://localhost:8000/api/tasks
 ```
 
 ### Supprimer une tache (admin uniquement)
+
 ```bash
 curl -X DELETE http://localhost:8000/api/tasks/1 \
   -H "Authorization: Bearer <VOTRE_TOKEN_JWT>"
